@@ -90,6 +90,19 @@ from temp3 t3
 where t3.request_at between '2013-10-01' and '2013-10-03'
 and (t3.total_ride_request - t3.is_anyone_banned) <> 0; --if only one entry is present in which user is banned and status is cancelled , query should return nothing
 
+--Optimized Code
+select t.request_at,
+--sum(case when t.status like 'cancel%' then 1 else 0 end) as cancelled_trip,
+--count(*) as total_trips,
+round(sum(case when t.status like 'cancel%' then 1 else 0 end)/count(*),2) as "Cancellation Rate"
+from trips t
+inner join users c
+on t.client_id = c.users_id
+inner join users d
+on t.driver_id = d.users_id
+where c.banned='No' and d.banned='No' and 
+t.request_at between '2013-10-01' and '2013-10-03'
+group by t.request_at;
 
 ---exception case for the commented query
 {"headers": {"Trips": 
