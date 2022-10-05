@@ -124,11 +124,11 @@ inner join users u2
 on c.driver_id = u2.users_id
 where u1.banned = 'No' and u2.banned = 'No'
 )
-select request_at,count(1) as request_count,sum(cancelled) as cancel_count,round(sum(cancelled)/count(1),2) from temp1
+select request_at as Day,round(sum(cancelled)/count(1),2) as "Cancellation Rate"  from temp1
+where request_at between '2013-10-01' and '2013-10-03'
 group by request_at
 order by request_at
 ;
-
 
 
 
