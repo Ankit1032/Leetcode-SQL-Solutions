@@ -113,7 +113,21 @@ group by t.request_at;
 	{"Users": [["1", "No", "client"], 
 			["10", "No", "driver"]]}}
 
-
+---another solution
+with temp1 as
+(select c.request_at,c.client_id,c.driver_id,c.status,u1.banned as client_banned, u2.banned as driver_banned ,
+case when c.status like 'cancelled%' then 1 else 0 end cancelled
+from trips c
+inner join users u1
+on c.client_id = u1.users_id
+inner join users u2
+on c.driver_id = u2.users_id
+where u1.banned = 'No' and u2.banned = 'No'
+)
+select request_at,count(1) as request_count,sum(cancelled) as cancel_count,round(sum(cancelled)/count(1),2) from temp1
+group by request_at
+order by request_at
+;
 
 
 
